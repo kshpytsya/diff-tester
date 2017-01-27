@@ -37,4 +37,5 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Software Development :: Bug Tracking',
     ],
+    download_url='https://github.com/kshpytsya/diff-tester/archive/v' + versioneer.get_version() + '.tar.gz'
 )
