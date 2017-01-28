@@ -1,0 +1,8 @@
+environment:
+    matrix:
+        - PYTHON: "C:/Python36-x64"
+install:
+    - "%PYTHON%/python -m pip install tox coverage"
+build: off
+test_script:
+    - "%PYTHON%/Scripts/tox -e tox"
