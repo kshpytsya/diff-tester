@@ -1,0 +1,3 @@
+[run]
+source=diff_tester
+omit=*/_version.py
