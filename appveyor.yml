@@ -1,6 +1,8 @@
 environment:
     matrix:
         - PYTHON: "C:/Python36-x64"
+    COVERALLS_REPO_TOKEN:
+        secure: m50ufEbkgTgF3JYYjrUsFy4LBgJxVS4V5YvqMsMEZXYKceX8Y2wnE9I18MOF8oPd
 install:
     - "%PYTHON%/python -m pip install tox coveralls"
 build: off
