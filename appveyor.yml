@@ -5,4 +5,4 @@ install:
     - "%PYTHON%/python -m pip install tox coverage"
 build: off
 test_script:
-    - "%PYTHON%/Scripts/tox -e py"
+    - "%PYTHON%/Scripts/tox -e py --develop"
