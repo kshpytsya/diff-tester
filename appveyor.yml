@@ -2,7 +2,9 @@ environment:
     matrix:
         - PYTHON: "C:/Python36-x64"
 install:
-    - "%PYTHON%/python -m pip install tox coverage"
+    - "%PYTHON%/python -m pip install tox coveralls"
 build: off
 test_script:
     - "%PYTHON%/Scripts/tox -e py --develop"
+after_test:
+    - "%PYTHON%/Scripts/coveralls"
