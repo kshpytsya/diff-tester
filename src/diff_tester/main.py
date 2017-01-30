@@ -57,8 +57,8 @@ def action_test(pm, args):
 
     sink.test_done(0, TestResult(success=True, output="alpha output"))
     sink.test_done(1, TestResult(success=True, output="beta output"))
-    sink.test_done(2, TestResult(success=False, output="delta output"))
-    sink.test_done(3, TestResult(success=False, output="epsilon output"))
+    sink.test_done(2, TestResult(success=False, output="gamma output"))
+    sink.test_done(3, TestResult(success=False, output="delta output"))
 
     sink.finish()
 
