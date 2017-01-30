@@ -33,10 +33,11 @@ class AppveyorSink(ISink):
                 "testName": test.name,
                 "testFramework": "diff-tester",
                 "outcome": ["None", "Skipped"][test.skipped],
-                "ErrorMessage": "",
-                "ErrorStackTrace": "",
-                "StdOut": "",
-                "StdErr": ""
+                "fileName": "setup.py",
+                # "ErrorMessage": "",
+                # "ErrorStackTrace": "",
+                # "StdOut": "",
+                # "StdErr": ""
             }
             for test in self.tests
         ])
@@ -51,14 +52,7 @@ class AppveyorSink(ISink):
         self._request("PUT", "api/tests",
             {
                 "testName": test.name,
-                # "testFramework": "diff-tester",
-                # "fileName": "",
-                "outcome": "Running",
-                # "durationMilliseconds": "0",
-                # "ErrorMessage": "",
-                # "ErrorStackTrace": "",
-                # "StdOut": "",
-                # "StdErr": ""
+                "outcome": "Running"
             }
         )
 
@@ -70,8 +64,6 @@ class AppveyorSink(ISink):
         self._request("PUT", "api/tests",
             {
                 "testName": test.name,
-                # "testFramework": "diff-tester",
-                # "fileName": "",
                 "outcome": ["Failed", "Passed"][result.success],
                 # "durationMilliseconds": "0",
                 # "ErrorMessage": "",
