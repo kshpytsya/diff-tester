@@ -30,7 +30,7 @@ class AppveyorSink(ISink):
             }
             for test in self.tests
         ]))
-        print(r.status_code)
+        print(r.status_code, r.text)
 
         self._state = "started"
 
