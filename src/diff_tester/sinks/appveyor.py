@@ -1,6 +1,4 @@
-import json
 import os
-import sys
 import requests
 from diff_tester.hookspecs import hookimpl, ISink, error, warning
 
@@ -33,11 +31,7 @@ class AppveyorSink(ISink):
                 "testName": test.name,
                 "testFramework": "diff-tester",
                 "outcome": ["None", "Skipped"][test.skipped],
-                "fileName": "setup.py",
-                # "ErrorMessage": "",
-                # "ErrorStackTrace": "",
-                # "StdOut": "",
-                # "StdErr": ""
+                "fileName": "",
             }
             for test in self.tests
         ])
