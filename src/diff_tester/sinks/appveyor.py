@@ -32,9 +32,9 @@ class AppveyorSink(ISink):
             {
                 "testName": test.name,
                 "testFramework": "diff-tester",
-                "fileName": "",
-                "outcome": "None",
-                "durationMilliseconds": "0",
+                # "fileName": "",
+                "outcome": ["None", "Skipped"][test.skipped],
+                # "durationMilliseconds": "0",
                 "ErrorMessage": "",
                 "ErrorStackTrace": "",
                 "StdOut": "",
@@ -47,6 +47,22 @@ class AppveyorSink(ISink):
 
     def test_start(self, id):
         assert self._state == "started"
+
+        test = self.tests[id]
+
+        self._post_request("api/tests",
+            {
+                "testName": test.name,
+                # "testFramework": "diff-tester",
+                # "fileName": "",
+                "outcome": "Running",
+                # "durationMilliseconds": "0",
+                # "ErrorMessage": "",
+                # "ErrorStackTrace": "",
+                # "StdOut": "",
+                # "StdErr": ""
+            }
+        )
 
     def test_done(self, id, result):
         assert self._state == "started"
