@@ -16,7 +16,7 @@ class AppveyorSink(ISink):
 
         self.tests = tests
 
-        r = requests.post(self.url + "/batch", payload=json.dumps([
+        r = requests.post(self.url + "/batch", data=json.dumps([
             {
                 "testName": test.name,
                 "testFramework": "diff-tester",
@@ -53,6 +53,5 @@ def difftester_addoption(parser, action):
 
 @hookimpl
 def difftester_create_sink(args):
-    print("appveyor url present", ENV in os.environ)
     if not args.no_appveyor_sink and ENV in os.environ:
         return AppveyorSink()
