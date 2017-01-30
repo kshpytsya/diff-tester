@@ -13,8 +13,8 @@ class AppveyorSink(ISink):
         self.url = os.environ[ENV]
         self.fail_on_errors = fail_on_errors
 
-    def _post_request(self, endpoint, j):
-        r = requests.post(self.url + endpoint, json=j)
+    def _request(self, method, endpoint, j):
+        r = requests.request(method, self.url + endpoint, json=j)
         if 400 <= r.status_code < 600:
             try:
                 msg = r.json()["Message"]
@@ -28,7 +28,7 @@ class AppveyorSink(ISink):
 
         self.tests = tests
 
-        self._post_request("api/tests/batch", [
+        self._request("POST", "api/tests/batch", [
             {
                 "testName": test.name,
                 "testFramework": "diff-tester",
@@ -50,7 +50,7 @@ class AppveyorSink(ISink):
 
         test = self.tests[id]
 
-        self._post_request("api/tests",
+        self._request("PUT", "api/tests",
             {
                 "testName": test.name,
                 "testFramework": "diff-tester",
@@ -69,7 +69,7 @@ class AppveyorSink(ISink):
 
         test = self.tests[id]
 
-        self._post_request("api/tests",
+        self._request("PUT", "api/tests",
             {
                 "testName": test.name,
                 "testFramework": "diff-tester",
