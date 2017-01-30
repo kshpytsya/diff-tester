@@ -5,7 +5,7 @@ import sys
 if sys.version_info < (3, 2):
     sys.exit('Sorry, Python < 3.2 is not supported')
 
-from setuptools import setup
+from setuptools import setup, find_packages
 import versioneer
 
 setup(
@@ -17,10 +17,11 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     install_requires=[
-        'pluggy>=0.3.0,<1.0'
+        'pluggy>=0.3.0,<1.0',
+        'requests>=2'
     ],
     package_dir={'': 'src'},
-    packages=['diff_tester'],
+    packages=find_packages('src'),
     entry_points={
         'console_scripts': [
             'diff-tester = diff_tester.main:main',
