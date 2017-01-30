@@ -17,6 +17,7 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     install_requires=[
+        'pluggy>=0.3.0,<1.0'
     ],
     package_dir={'': 'src'},
     packages=['diff_tester'],
