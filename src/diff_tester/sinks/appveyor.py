@@ -28,17 +28,11 @@ class AppveyorSink(ISink):
 
         self.tests = tests
 
-        self._post_request("api/build/message", {
-            "message": "This is a test message",
-            "category": "warning",
-            "details": "Additional information for the message"
-        })
-
         self._post_request("api/tests/batch", [
             {
                 "testName": test.name,
                 "testFramework": "diff-tester",
-                "fileName": "some.file",
+                "fileName": "",
                 "outcome": "None",
                 "durationMilliseconds": "0",
                 "ErrorMessage": "",
