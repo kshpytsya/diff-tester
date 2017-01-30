@@ -1,29 +1,34 @@
 import json
 import os
+import sys
 import requests
-from diff_tester.hookspecs import hookimpl, ISink
+from diff_tester.hookspecs import hookimpl, ISink, error, warning
 
 ENV = "APPVEYOR_API_URL"
 
 
 class AppveyorSink(ISink):
-    def __init__(self):
+    def __init__(self, fail_on_errors):
         self._state = "init"
         self.url = os.environ[ENV]
+        self.fail_on_errors = fail_on_errors
 
     def _post_request(self, endpoint, j):
         r = requests.post(self.url + endpoint, json=j)
-        try:
-            print(r.status_code, r.json())
-        except:
-            print(r.status_code, r.text)
+        if 400 <= r.status_code < 600:
+            try:
+                msg = r.json()["Message"]
+            except:
+                msg = r.text
+
+            [warning, error][self.fail_on_errors]("AppVeyor API failed: " + msg)
 
     def start(self, tests):
         assert self._state == "init"
 
         self.tests = tests
 
-        self._post_request("api/build/messages", {
+        self._post_request("api/build/message", {
             "message": "This is a test message",
             "category": "warning",
             "details": "Additional information for the message"
@@ -61,9 +66,10 @@ class AppveyorSink(ISink):
 def difftester_addoption(parser, action):
     if action in ("test", "run"):
         parser.add_argument('--no-appveyor-sink', action='store_true', help="disable reporting via AppVeyor Build Worker API")
+        parser.add_argument('--appveyor-sink-fail', action='store_true', help="fail on AppVeyor Build Worker API errors")
 
 
 @hookimpl
 def difftester_create_sink(args):
     if not args.no_appveyor_sink and ENV in os.environ:
-        return AppveyorSink()
+        return AppveyorSink(args.appveyor_sink_fail)

@@ -3,14 +3,25 @@ Hook specifications for diff-tester
 """
 
 from abc import ABCMeta, abstractmethod
+import sys
 from collections import namedtuple
 from pluggy import HookspecMarker, HookimplMarker
 
-TAG = "diff-tester"
+
+class Error(Exception):
+    pass
+
+
+def warning(msg):
+    sys.stderr.write("warning: {}\n".format(msg))
+
+
+def error(msg):
+    raise Error(msg)
+
 
 TestDecl = namedtuple("TestDecl", "name description expected_success skipped")
 TestResult = namedtuple("TestResult", "success output")
-
 
 
 class ISink(metaclass=ABCMeta):
@@ -34,6 +45,8 @@ class ISink(metaclass=ABCMeta):
         """ TODO
         """
 
+
+TAG = "diff-tester"
 
 hookspec = HookspecMarker(TAG)
 hookimpl = HookimplMarker(TAG)
