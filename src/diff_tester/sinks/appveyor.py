@@ -9,18 +9,31 @@ ENV = "APPVEYOR_API_URL"
 class AppveyorSink(ISink):
     def __init__(self):
         self._state = "init"
-        self.url = os.environ[ENV] + "api/tests"
+        self.url = os.environ[ENV]
+
+    def _post_request(self, endpoint, j):
+        r = requests.post(self.url + endpoint, json=j)
+        try:
+            print(r.status_code, r.json())
+        except:
+            print(r.status_code, r.text)
 
     def start(self, tests):
         assert self._state == "init"
 
         self.tests = tests
 
-        r = requests.post(self.url + "/batch", data=json.dumps([
+        self._post_request("api/build/messages", {
+            "message": "This is a test message",
+            "category": "warning",
+            "details": "Additional information for the message"
+        })
+
+        self._post_request("api/tests/batch", [
             {
                 "testName": test.name,
                 "testFramework": "diff-tester",
-                "fileName": "",
+                "fileName": "some.file",
                 "outcome": "None",
                 "durationMilliseconds": "0",
                 "ErrorMessage": "",
@@ -29,8 +42,7 @@ class AppveyorSink(ISink):
                 "StdErr": ""
             }
             for test in self.tests
-        ]))
-        print(r.status_code, r.text)
+        ])
 
         self._state = "started"
 
