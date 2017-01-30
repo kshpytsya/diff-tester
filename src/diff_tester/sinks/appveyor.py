@@ -74,11 +74,11 @@ class AppveyorSink(ISink):
                 "testName": test.name,
                 "testFramework": "diff-tester",
                 # "fileName": "",
-                "outcome": ["Failed", "Passed"][test.success],
+                "outcome": ["Failed", "Passed"][result.success],
                 # "durationMilliseconds": "0",
                 # "ErrorMessage": "",
                 # "ErrorStackTrace": "",
-                "StdOut": test.output,
+                "StdOut": result.output,
                 # "StdErr": ""
             }
         )
