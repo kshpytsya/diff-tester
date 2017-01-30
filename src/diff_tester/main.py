@@ -1,4 +1,5 @@
 import argparse
+import sys
 import pkgutil
 import pluggy
 
@@ -16,10 +17,16 @@ def pm_register_all_modules(pm, package):
             pm_register_all_modules(pm, module)
 
 
+def warning(msg):
+    sys.stderr.write("warning: {}\n".format(msg))
+
+
 class SinkSet(ISink):
     def __init__(self, pm, args):
         self.sinks = pm.hook.difftester_create_sink(args=args)
         assert all(isinstance(sink, ISink) for sink in self.sinks)
+        if len(self.sinks) == 0:
+            warning("no test sinks defined")
 
     def start(self, *args, **kw):
         for sink in self.sinks:
@@ -75,7 +82,6 @@ def action_lint(pm, args):
 def main():
     pm = pluggy.PluginManager(hookspecs.TAG)
     pm.add_hookspecs(hookspecs)
-    pm.register(diff_tester.main)
     pm_register_all_modules(pm, diff_tester.sinks)
     pm.load_setuptools_entrypoints(hookspecs.TAG)
     pm.check_pending()
