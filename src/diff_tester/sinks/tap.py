@@ -1,5 +1,5 @@
 import sys
-from diff_tester.hookspecs import hookimpl, ISink
+from diff_tester.common import ISink, hookimpl
 
 
 class TapSink(ISink):

@@ -18,7 +18,8 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     install_requires=[
         'pluggy>=0.3.0,<1.0',
-        'requests>=2'
+        'requests>=2',
+        'strictyaml>=0.4.1'
     ],
     package_dir={'': 'src'},
     packages=find_packages('src'),

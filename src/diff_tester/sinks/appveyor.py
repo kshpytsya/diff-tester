@@ -1,6 +1,6 @@
 import os
 import requests
-from diff_tester.hookspecs import hookimpl, ISink, error, warning
+from diff_tester.common import ISink, error, warning, hookimpl
 
 ENV = "APPVEYOR_API_URL"
 
@@ -32,6 +32,11 @@ class AppveyorSink(ISink):
                 "testFramework": "diff-tester",
                 "outcome": ["None", "Skipped"][test.skipped],
                 "fileName": "",
+                "durationMilliseconds": "0",
+                "ErrorMessage": "",
+                "ErrorStackTrace": "",
+                "StdOut": "",
+                "StdErr": ""
             }
             for test in self.tests
         ])

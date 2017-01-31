@@ -2,10 +2,11 @@ import argparse
 import sys
 import pkgutil
 import pluggy
+import strictyaml as sy
 
 import diff_tester
-from .hookspecs import ISink, TestDecl, TestResult, warning, error, Error
-from . import hookspecs
+from . import common
+from .common import ISink, HOOKTAG, TestDecl, TestResult, warning
 import diff_tester.sinks
 
 
@@ -15,6 +16,10 @@ def pm_register_all_modules(pm, package):
         pm.register(module)
         if ispkg:
             pm_register_all_modules(pm, module)
+
+
+def load_config(root):
+    pass
 
 
 class SinkSet(ISink):
@@ -64,7 +69,10 @@ def action_test(pm, args):
 
 
 def action_run(pm, args):
-    pass
+    success = True
+
+    if not success:
+        sys.exit(args.fail_exit_code)
 
 
 def action_gold(pm, args):
@@ -76,34 +84,36 @@ def action_lint(pm, args):
 
 
 def main():
-    try:
-        pm = pluggy.PluginManager(hookspecs.TAG)
-        pm.add_hookspecs(hookspecs)
-        pm_register_all_modules(pm, diff_tester.sinks)
-        pm.load_setuptools_entrypoints(hookspecs.TAG)
-        pm.check_pending()
+    pm = pluggy.PluginManager(HOOKTAG)
+    pm.add_hookspecs(common)
+    pm_register_all_modules(pm, diff_tester.sinks)
+    pm.load_setuptools_entrypoints(HOOKTAG)
+    pm.check_pending()
 
-        parser = argparse.ArgumentParser(
-        )
-        parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + diff_tester.__version__)
-        pm.hook.difftester_addoption(parser=parser, action=None)
+    parser = argparse.ArgumentParser(
+    )
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + diff_tester.__version__)
+    pm.hook.difftester_addoption(parser=parser, action=None)
 
-        subparsers = parser.add_subparsers(title="actions", dest="action", description="")
-        subparsers.required = True
+    subparsers = parser.add_subparsers(title="actions", dest="action", description="")
+    subparsers.required = True
 
-        parser_test = subparsers.add_parser('test', help='')
-        parser_run = subparsers.add_parser('run', help='')
-        parser_gold = subparsers.add_parser('gold', help='')
-        parser_lint = subparsers.add_parser('lint', help='')
+    parser_test = subparsers.add_parser('test', help='')
+    parser_run = subparsers.add_parser('run', help='')
+    parser_gold = subparsers.add_parser('gold', help='')
+    parser_lint = subparsers.add_parser('lint', help='')
 
-        pm.hook.difftester_addoption(parser=parser_test, action="test")
-        pm.hook.difftester_addoption(parser=parser_run, action="run")
+    parser_run.add_argument('--fail-exit-code', default=2, help="exit code to return on test failure (default: %(default)s)", metavar="N")
 
-        args = parser.parse_args()
+    for i in (parser_run, parser_gold):
+        i.add_argument('-j', '--jobs', type=int, help="run N jobs in parallel", metavar="N")
 
-        globals()["action_" + args.action](pm, args)
-    except Error as e:
-        sys.stderr.write("error: {}\n".format(str(e)))
+    pm.hook.difftester_addoption(parser=parser_test, action="test")
+    pm.hook.difftester_addoption(parser=parser_run, action="run")
+
+    args = parser.parse_args()
+
+    globals()["action_" + args.action](pm, args)
 
 
 if __name__ == "__main__":
